@@ -21,7 +21,7 @@ class OuterVehicleLogController extends Controller
         $vehicleLog = VehicleLog::create([
             'vehicle_id' => $data['vehicleId'],
             'weight' => $data['weight'],
-            'weight_type' => $data['weightType'],
+            'weight_type' => $data['weightType']??1,
             'note' => $data['note']?? null,
             'date' => $data['date'],
         ]);
