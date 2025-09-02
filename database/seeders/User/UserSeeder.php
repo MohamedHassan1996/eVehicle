@@ -5,7 +5,6 @@ namespace Database\Seeders\User;
 use App\Enums\User\UserStatus;
 use App\Models\User;
 use Illuminate\Database\Seeder;
-use Spatie\Permission\Models\Role;
 
 
 class UserSeeder extends Seeder
