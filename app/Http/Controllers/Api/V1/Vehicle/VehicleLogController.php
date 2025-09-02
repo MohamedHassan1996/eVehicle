@@ -4,20 +4,20 @@ namespace App\Http\Controllers\Api\V1\Vehicle;
 
 use App\Helpers\ApiResponse;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\V1\Vehicle\CreateVehicleRequest;
-use App\Http\Requests\V1\Vehicle\UpdateVehicleRequest;
-use App\Http\Resources\V1\Vehicle\AllVehicleCollection;
-use App\Http\Resources\V1\Vehicle\VehicleResource;
-use App\Services\Vehicle\VehicleService;
+use App\Http\Requests\V1\VehicleLog\CreateVehicleLogRequest;
+use App\Http\Requests\V1\VehicleLog\UpdateVehicleLogRequest;
+use App\Http\Resources\V1\VehicleLog\AllVehicleLogCollection;
+use App\Http\Resources\V1\VehicleLog\VehicleLogResource;
+use App\Services\Vehicle\VehicleLogService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
 
 
-class VehicleController extends Controller implements HasMiddleware
+class VehicleLogController extends Controller implements HasMiddleware
 {
-    public function __construct(protected VehicleService $vehicleService)
+    public function __construct(protected VehicleLogService $vehicleLogService)
     {
     }
 
@@ -36,9 +36,9 @@ class VehicleController extends Controller implements HasMiddleware
 
     public function index(Request $request)
     {
-        $vehicles = $this->vehicleService->allVehicles();
+        $vehicleLogs = $this->vehicleLogService->allVehicleLogs();
 
-        return ApiResponse::success(new AllVehicleCollection($vehicles));
+        return ApiResponse::success(new AllVehicleLogCollection($vehicleLogs));
 
 
         //return ApiResponse::success(new AllUserCollection(PaginateCollection::paginate($users->getCollection(), $request->pageSize?$request->pageSize:10)));
@@ -49,12 +49,12 @@ class VehicleController extends Controller implements HasMiddleware
      * Show the form for creating a new resource.
      */
 
-    public function store(CreateVehicleRequest $createVehicleRequest)
+    public function store(CreateVehicleLogRequest $createVehicleLogRequest)
     {
         try {
             DB::beginTransaction();
 
-            $this->vehicleService->createVehicle($createVehicleRequest->validated());
+            $this->vehicleLogService->createVehicleLog($createVehicleLogRequest->validated());
 
             DB::commit();
 
@@ -73,20 +73,20 @@ class VehicleController extends Controller implements HasMiddleware
      * Show the form for editing the specified resource.
      */
 
-    public function show($vehicle)
+    public function show($vehicleLog)
     {
-        $vehicle  =  $this->vehicleService->editVehicle($vehicle);
-        return ApiResponse::success(new VehicleResource($vehicle));
+        $vehicleLog  =  $this->vehicleLogService->editVehicleLog($vehicleLog);
+        return ApiResponse::success(new VehicleLogResource($vehicleLog));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update($vehicle,UpdateVehicleRequest $updateVehicleRequest)
+    public function update($vehicleLog, UpdateVehicleLogRequest $updateVehicleLogRequest)
     {
         try {
             DB::beginTransaction();
-            $this->vehicleService->updateVehicle($vehicle, $updateVehicleRequest->validated());
+            $this->vehicleLogService->updateVehicleLog($vehicleLog, $updateVehicleLogRequest->validated());
             DB::commit();
             return ApiResponse::success([], __('crud.updated'));
 
@@ -101,16 +101,14 @@ class VehicleController extends Controller implements HasMiddleware
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy($vehicle)
+    public function destroy($vehicleLog)
     {
 
         try {
             DB::beginTransaction();
-            $this->vehicleService->deleteVehicle($vehicle);
+            $this->vehicleLogService->deleteVehicleLog($vehicleLog);
             DB::commit();
-            return response()->json([
-                'message' => __('crud.updated')
-            ], 200);
+            return ApiResponse::success([], __('crud.deleted'));
 
         } catch (\Exception $e) {
             DB::rollBack();

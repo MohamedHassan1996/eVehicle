@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\V1\CheckVehicleController;
 use App\Http\Controllers\Api\V1\OuterVehicleLogController;
 use App\Http\Controllers\Api\V1\User\UserController;
 use App\Http\Controllers\Api\V1\Vehicle\VehicleController;
+use App\Http\Controllers\Api\V1\Vehicle\VehicleLogController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -39,6 +40,15 @@ Route::prefix('v1')->group(function () {
         Route::put('{vehicle}', [VehicleController::class, 'update']);
         Route::delete('{vehicle}', [VehicleController::class, 'destroy']);
     });
+
+    Route::prefix('vehicle-logs')->group(function () {
+        Route::get('', [VehicleLogController::class, 'index']);
+        Route::post('', [VehicleLogController::class, 'store']);
+        Route::get('{vehicleLog}', [VehicleLogController::class, 'show']);
+        Route::put('{vehicleLog}', [VehicleLogController::class, 'update']);
+        Route::delete('{vehicleLog}', [VehicleLogController::class, 'destroy']);
+    });
+
 
 
 });

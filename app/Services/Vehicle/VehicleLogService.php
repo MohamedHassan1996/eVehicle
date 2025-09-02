@@ -17,7 +17,7 @@ class VehicleLogService
     {
         $perPage = request()->get('pageSize', 10);
 
-        $vehicleLogs = QueryBuilder::for(Vehicle::class)
+        $vehicleLogs = QueryBuilder::for(VehicleLog::class)
             ->allowedFilters([
                 //AllowedFilter::custom('search', new FilterVehicle()),
                 AllowedFilter::exact('vehicleId', 'vehicle_id'),

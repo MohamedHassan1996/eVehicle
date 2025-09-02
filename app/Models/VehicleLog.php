@@ -16,4 +16,12 @@ class VehicleLog extends Model
         'note',
         'date',
     ];
+
+    public function getLastestEmptyVehicleWeightAttribute()
+    {
+        return VehicleLog::where('vehicle_id', $this->vehicle_id)
+            ->where('weight_type', 0)
+            ->orderBy('created_at', 'desc')
+            ->value('weight');
+    }
 }
