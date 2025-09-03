@@ -20,6 +20,7 @@ class VehicleService
             ->allowedFilters([
                 AllowedFilter::custom('search', new FilterVehicle()),
             ])
+            ->with('vehicleLogs')
             ->paginate($perPage); // Pagination applied here
 
 

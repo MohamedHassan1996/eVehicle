@@ -14,4 +14,17 @@ class Vehicle extends Model
         'company_name',
         'type',
     ];
+
+    public function vehicleLogs()
+    {
+        return $this->hasMany(VehicleLog::class);
+    }
+
+    public function getLastestEmptyVehicleWeightAttribute()
+    {
+        return $this->vehicleLogs()
+            ->where('weight_type', 0)
+            ->orderBy('created_at', 'desc')
+            ->value('weight')??0;
+    }
 }

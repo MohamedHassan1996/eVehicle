@@ -22,6 +22,7 @@ class VehicleLogService
                 //AllowedFilter::custom('search', new FilterVehicle()),
                 AllowedFilter::exact('vehicleId', 'vehicle_id'),
             ])
+            ->with('vehicle')
             ->paginate($perPage); // Pagination applied here
 
 

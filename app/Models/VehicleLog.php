@@ -17,6 +17,11 @@ class VehicleLog extends Model
         'date',
     ];
 
+    public function vehicle()
+    {
+        return $this->belongsTo(Vehicle::class);
+    }
+
     public function getLastestEmptyVehicleWeightAttribute()
     {
         return VehicleLog::where('vehicle_id', $this->vehicle_id)

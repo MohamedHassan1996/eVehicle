@@ -20,6 +20,7 @@ class AllVehicleLogResource extends JsonResource
         return [
             'vehicleLogId' => $this->id,
             'vehicleId' => $this->vehicle_id,
+            'licensePlate' => $this->vehicle->license_plate,
             'weight' => $this->weight,
             'weightType' => $this->weight_type,
             'date' => Carbon::parse($this->date)->format('d/m/Y'),
