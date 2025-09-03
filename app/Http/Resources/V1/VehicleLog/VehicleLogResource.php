@@ -21,7 +21,11 @@ class VehicleLogResource extends JsonResource
             'weight' => $this->weight,
             'weightType' => $this->weight_type,
             'date' => $this->date,
-            'note' => $this->date??''
+            'note' => $this->note??'',
+            'licensePlate' => $this->vehicle->license_plate,
+            'emptyVehicleWeight' => $this->lastest_empty_vehicle_weight,
+            'vehicleLoad' => $this->weight - $this->lastest_empty_vehicle_weight
+
         ];
     }
 }

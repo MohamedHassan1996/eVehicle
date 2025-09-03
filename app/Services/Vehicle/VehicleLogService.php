@@ -47,7 +47,7 @@ class VehicleLogService
 
     public function editVehicleLog(int $vehicleLogId)
     {
-        return VehicleLog::findOrFail($vehicleLogId);
+        return VehicleLog::with('vehicle')->findOrFail($vehicleLogId);
     }
 
     public function updateVehicleLog(int $vehicleLogId, array $vehicleLogData)
