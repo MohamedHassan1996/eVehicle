@@ -9,6 +9,7 @@ use App\Http\Requests\V1\Vehicle\UpdateVehicleRequest;
 use App\Http\Resources\V1\Vehicle\AllVehicleCollection;
 use App\Http\Resources\V1\Vehicle\VehicleResource;
 use App\Services\Vehicle\VehicleService;
+use App\Services\Vehicle\VehicleLogService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Routing\Controllers\HasMiddleware;
@@ -17,7 +18,7 @@ use Illuminate\Routing\Controllers\Middleware;
 
 class VehicleController extends Controller implements HasMiddleware
 {
-    public function __construct(protected VehicleService $vehicleService)
+    public function __construct(protected VehicleService $vehicleService, protected VehicleLogService $vehicleLogService)
     {
     }
 
@@ -54,7 +55,14 @@ class VehicleController extends Controller implements HasMiddleware
         try {
             DB::beginTransaction();
 
-            $this->vehicleService->createVehicle($createVehicleRequest->validated());
+            $vehicle = $this->vehicleService->createVehicle($createVehicleRequest->validated());
+
+            if(isset($createVehicleRequest->validated()['vehicleLogs'])){
+                foreach($createVehicleRequest->validated()['vehicleLogs'] as $vehicleLogData){
+                    $vehicleLogData['vehicleId'] = $vehicle->id;
+                    $this->vehicleLogService->createVehicleLog($vehicleLogData);
+                }
+            }
 
             DB::commit();
 

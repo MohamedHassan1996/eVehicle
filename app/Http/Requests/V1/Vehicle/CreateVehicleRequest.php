@@ -30,6 +30,7 @@ class CreateVehicleRequest extends FormRequest
             'licensePlate' => ['required', 'string', 'unique:vehicles,license_plate'],
             'companyName' => ['nullable', 'string'],
             'type' => ['nullable', 'string'],
+            'vehicleLogs' => ['nullable', 'array']
         ];
     }
     public function failedValidation(Validator $validator)
