@@ -27,7 +27,9 @@ class CreateVehicleRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'licensePlate' => ['required', 'string', 'unique:vehicles,license_plate'],
+            'licensePlate' => ['required', 'string', 'unique:vehicles,license_plate',
+                'regex:/^[a-zA-Z]{2}\d{3}[a-zA-Z]{2}$/i'
+            ],
             'companyName' => ['nullable', 'string'],
             'type' => ['nullable', 'string'],
             'vehicleLogs' => ['nullable', 'array']
@@ -44,11 +46,11 @@ class CreateVehicleRequest extends FormRequest
         );
     }
 
-    /*public function messages()
+    public function messages()
     {
         return [
-            'username.unique' => __('validation.custom.username.unique'),
+            'licensePlate.regex' => 'License plate must be in format: 2 letters, 3 numbers, 2 letters (e.g., TT568HM).'
         ];
-    }*/
+    }
 
 }

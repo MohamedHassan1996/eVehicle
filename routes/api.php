@@ -20,7 +20,7 @@ Route::prefix('v1')->group(function () {
     });
 
     Route::prefix('outer')->group(function () {
-        Route::get('vehicle-check', CheckVehicleController::class);
+        Route::post('vehicle-check', CheckVehicleController::class);
         Route::post('vehicle-logs', [OuterVehicleLogController::class, 'store']);
     });
 
