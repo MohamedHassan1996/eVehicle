@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\V1\Auth\AuthLoginController;
 use App\Http\Controllers\Api\V1\Auth\AuthLogoutController;
 use App\Http\Controllers\Api\V1\CheckVehicleController;
+use App\Http\Controllers\Api\V1\ImportVehicleDataController;
 use App\Http\Controllers\Api\V1\OuterVehicleLogController;
 use App\Http\Controllers\Api\V1\User\UserController;
 use App\Http\Controllers\Api\V1\Vehicle\VehicleController;
@@ -48,6 +49,8 @@ Route::prefix('v1')->group(function () {
         Route::put('{vehicleLog}', [VehicleLogController::class, 'update']);
         Route::delete('{vehicleLog}', [VehicleLogController::class, 'destroy']);
     });
+
+    Route::post('import-vehicle-data', [ImportVehicleDataController::class, 'import']);
 
 
 
