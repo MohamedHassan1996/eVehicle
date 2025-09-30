@@ -20,11 +20,17 @@ class VehiclePdfExportController extends Controller
     {
 
         $request->validate([
-            'vehicleLogIds' => 'required', // license_plate (Tractor)
+            'vehicleLogIds' => 'sometimes|array', // license_plate (Tractor)
+            'allData' => 'sometimes|boolean',
         ]);
 
         // Build query for logs
-        $logs = VehicleLog::whereIn('id' ,$request->vehicleLogIds)->with('vehicle')->get();
+        $logs = null;
+        if ($request->allData) {
+            $logs = VehicleLog::with('vehicle')->get();
+        } else {
+            $logs = VehicleLog::whereIn('id' ,$request->vehicleLogIds)->with('vehicle')->get();
+        }
 
         //$vehicle = Vehicle::where('id', $log->vehicle_id)->first();
 
