@@ -53,7 +53,7 @@ public function import(Request $request)
             VehicleLog::create([
                 'vehicle_id'  => $vehicle->id,
                 'date'        => $this->parseExcelDate($firstRow[0])?->startOfDay()?->format('Y-m-d H:i:s'),
-                'weight'      => $firstRow[2] * 100,
+                'weight'      => $firstRow[2],
                 'note'        => '',
                 'weight_type' => 0, // Tara
             ]);
@@ -65,7 +65,7 @@ public function import(Request $request)
                 VehicleLog::create([
                     'vehicle_id'  => $vehicle->id,
                     'date'        => $this->parseExcelDate($row[0])?->startOfDay()?->format('Y-m-d H:i:s'),
-                    'weight'      => $row[3] * 100,
+                    'weight'      => $row[3],
                     'note'        => '',
                     'weight_type' => 1, // full load
                 ]);
