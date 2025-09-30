@@ -15,7 +15,7 @@ class VehicleLogService
     }
     public function allVehicleLogs()
     {
-        $perPage = request()->get('pageSize', 10);
+        $perPage = request()->get('pageSize', 10000);
 
         $vehicleLogs = QueryBuilder::for(VehicleLog::class)
             ->allowedFilters([

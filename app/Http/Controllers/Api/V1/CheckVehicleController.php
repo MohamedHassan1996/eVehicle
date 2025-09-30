@@ -14,7 +14,7 @@ class CheckVehicleController extends Controller
     $licensePlate = request('licensePlate');
 
     // Validate license plate format: 2 letters, 3 numbers, 2 letters
-    $validator = Validator::make(
+    /*$validator = Validator::make(
         ['licensePlate' => $licensePlate],
         [
             'licensePlate' => [
@@ -27,14 +27,14 @@ class CheckVehicleController extends Controller
             'licensePlate.required' => 'License plate is required.',
             'licensePlate.regex' => 'License plate must be in format: 2 letters, 3 numbers, 2 letters (e.g., TT568HM).'
         ]
-    );
+    );*/
 
-    if ($validator->fails()) {
+    /*if ($validator->fails()) {
         return ApiResponse::error(
             $validator->errors()->first(),
             422
         );
-    }
+    }*/
 
     // Normalize to uppercase for consistency
     $licensePlate = strtoupper($licensePlate);
