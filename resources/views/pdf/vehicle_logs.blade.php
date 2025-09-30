@@ -6,27 +6,66 @@
     <style>
         body {
             font-family: DejaVu Sans, sans-serif;
-            font-size: 12px;
-        }
-        h2 {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 10px;
-        }
-        table th, table td {
-            border: 1px solid #000;
-            padding: 6px;
-            text-align: center;
-        }
-        table th {
-            background-color: #f0f0f0;
+            font-size: 14px;
+            padding: 40px;
         }
 
-        /* ✅ Force page break after each log */
+        .log-page {
+            max-width: 600px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+        }
+
+        .company-name {
+            font-size: 24px;
+            font-weight: bold;
+            color: #111;
+        }
+
+        .company-subtitle {
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .date {
+            font-size: 14px;
+        }
+
+        .divider {
+            border-top: 2px dashed #ccc;
+            margin: 30px 0;
+        }
+
+        .weight-row {
+            display: flex;
+            justify-content: space-between;
+            margin: 25px 0;
+            font-size: 16px;
+        }
+
+        .weight-label {
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .weight-value {
+            font-weight: normal;
+        }
+
+        .netto-row {
+            display: flex;
+            justify-content: space-between;
+            margin: 25px 0;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
         .page-break {
             page-break-after: always;
         }
@@ -36,42 +75,45 @@
 
     @foreach ($logs as $log)
         <div class="log-page">
-            <h2>Tractor Load Report</h2>
+            <div class="header">
+                <div>
+                    <div class="company-name">{{ $log->vehicle->company_name }}</div>
+                </div>
+                <div class="date">
+                    Date: {{ \Carbon\Carbon::parse($log->date)->format('d/m/y') }}
+                </div>
+            </div>
 
-            <p><strong>Targa:</strong> {{ $log->vehicle->license_plate }}</p>
-            <p><strong>Data:</strong> {{ now()->format('d/m/y') }}</p>
-            <p><strong>Ora:</strong> {{ now()->format('H:i') }}</p>
+            <div class="divider"></div>
 
-            <table>
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Data</th>
-                        <th>Ora</th>
-                        <th>Total Weight</th>
-                        <th>Empty Weight</th>
-                        <th>Difference</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>{{ $log->id }}</td>
-                        <td>{{ \Carbon\Carbon::parse($log->date)->format('d/m/Y') }}</td>
-                        <td>{{ \Carbon\Carbon::parse($log->date)->format('H:i') }}</td>
-                        <td>{{ $log->weight }}</td>
-                        <td>
-                            @php
-                                $emptyWeight = $log->vehicle->lastestEmptyVehicleWeight;
-                                echo $emptyWeight;
-                            @endphp
-                        </td>
-                        <td>{{ $log->weight - $emptyWeight }}</td>
-                    </tr>
-                </tbody>
-            </table>
+            <div class="weight-row">
+                <span class="weight-label">TYPE</span>
+                <span class="weight-value">KG</span>
+            </div>
+
+            <div class="weight-row">
+                <span class="weight-label">PESATA</span>
+                <span class="weight-value">{{ $log->weight }}</span>
+            </div>
+
+            <div class="weight-row">
+                <span class="weight-label">TARA</span>
+                <span class="weight-value">
+                    @php
+                        $emptyWeight = $log->vehicle->lastestEmptyVehicleWeight;
+                        echo $emptyWeight;
+                    @endphp
+                </span>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="netto-row">
+                <span>NETTO :</span>
+                <span>{{ $log->weight - $emptyWeight }} KG</span>
+            </div>
         </div>
 
-        {{-- ✅ Add a page break between logs (except after the last one) --}}
         @if (!$loop->last)
             <div class="page-break"></div>
         @endif
