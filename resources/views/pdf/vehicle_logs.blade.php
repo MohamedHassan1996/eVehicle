@@ -104,8 +104,7 @@
             <table class="header-table">
                 <tr>
                     <td style="width: 50%; vertical-align: top;">
-                        <div class="company-name">BBC</div>
-                        <div class="company-subtitle">Energy</div>
+                        <div class="company-name">{{ $log->vehicle->company_name }}</div>
                     </td>
                     <td style="width: 50%; vertical-align: top;">
                         <div class="date">
