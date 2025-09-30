@@ -20,26 +20,24 @@ class VehiclePdfExportController extends Controller
     {
 
         $request->validate([
-            'vehicleLogId' => 'required|string', // license_plate (Tractor)
+            'vehicleLogIds' => 'required', // license_plate (Tractor)
         ]);
 
         // Build query for logs
-        $log = VehicleLog::where('id' ,$request->vehicleLogId)->first();
+        $logs = VehicleLog::whereIn('id' ,$request->vehicleLogIds)->with('vehicle')->get();
 
-        $vehicle = Vehicle::where('id', $log->vehicle_id)->first();
+        //$vehicle = Vehicle::where('id', $log->vehicle_id)->first();
 
-        $vehicleEmptyWeight = VehicleLog::where('vehicle_id', $vehicle->id)->where('weight_type', 0)->first()?->weight??0;
+        //$vehicleEmptyWeight = VehicleLog::where('vehicle_id', $vehicle->id)->where('weight_type', 0)->first()?->weight??0;
 
         // Generate PDF
         $pdf = Pdf::loadView('pdf.vehicle_logs', [
-            'vehicle' => $vehicle,
-            'log' => $log,
-            'emptyWeight' => $vehicleEmptyWeight,
+            'logs' => $logs,
         ]);
 
         // Return as downloadable file
         // ✅ Define filename and save path
-        $fileName = 'tractor_' . $vehicle->license_plate . '_logs_' . Carbon::now()->format('Ymd_His') . '.pdf';
+        $fileName =  'logs_' . Carbon::now()->format('Ymd_His') . '.pdf';
         $filePath = 'exports/' . $fileName;
 
         // ✅ Save the file to `storage/app/public/exports`

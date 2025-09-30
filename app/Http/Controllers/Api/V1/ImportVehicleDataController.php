@@ -39,6 +39,9 @@ public function import(Request $request)
 
             $firstRow = $tractorRows->first();
 
+            $vehicle = Vehicle::where('license_plate', 'TRACTOR-' . $tractor)->first();
+            if (!$vehicle) {
+
             // ✅ Create vehicle
             $vehicle = Vehicle::create([
                 'license_plate' => 'TRACTOR-' . $tractor,
@@ -50,11 +53,11 @@ public function import(Request $request)
             VehicleLog::create([
                 'vehicle_id'  => $vehicle->id,
                 'date'        => $this->parseExcelDate($firstRow[0])?->startOfDay()?->format('Y-m-d H:i:s'),
-                'weight'      => $firstRow[2],
+                'weight'      => $firstRow[2] * 100,
                 'note'        => '',
                 'weight_type' => 0, // Tara
             ]);
-
+        }
             // ✅ Loaded logs (KG)
             foreach ($tractorRows->skip(1) as $row) {
                 if (empty($row[0]) || empty($row[3])) continue;
@@ -62,7 +65,7 @@ public function import(Request $request)
                 VehicleLog::create([
                     'vehicle_id'  => $vehicle->id,
                     'date'        => $this->parseExcelDate($row[0])?->startOfDay()?->format('Y-m-d H:i:s'),
-                    'weight'      => $row[3],
+                    'weight'      => $row[3] * 100,
                     'note'        => '',
                     'weight_type' => 1, // full load
                 ]);

@@ -25,40 +25,57 @@
         table th {
             background-color: #f0f0f0;
         }
+
+        /* ✅ Force page break after each log */
+        .page-break {
+            page-break-after: always;
+        }
     </style>
 </head>
 <body>
 
-    <h2>Tractor Load Report</h2>
+    @foreach ($logs as $log)
+        <div class="log-page">
+            <h2>Tractor Load Report</h2>
 
-    <p><strong>Targa:</strong> {{ $vehicle->license_plate }}</p>
-    <p><strong>Data:</strong> {{ now()->format('d/m/y') }}</p>
-    <p><strong>Ora:</strong> {{ now()->format('H:i') }}</p>
+            <p><strong>Targa:</strong> {{ $log->vehicle->license_plate }}</p>
+            <p><strong>Data:</strong> {{ now()->format('d/m/y') }}</p>
+            <p><strong>Ora:</strong> {{ now()->format('H:i') }}</p>
 
-    <table>
-        <thead>
-            <tr>
-                <th>#</th>
-                <th>Data</th>
-                <th>Ora</th>
-                <th>Total Weight</th>
-                <th>Empty Weight</th>
-                <th>Difference</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>{{ $log->id }}</td>
-                <td>{{ \Carbon\Carbon::parse($log->date)->format('d/m/Y') }}</td>
-                <td>{{ \Carbon\Carbon::parse($log->date)->format('H:i') }}</td>
-                <td>{{ $log->weight }}</td>
-                <td>
-                    {{ $emptyWeight }}
-                </td>
-                <td>{{ $log->weight - $emptyWeight }}</td>
-            </tr>
-        </tbody>
-    </table>
+            <table>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Data</th>
+                        <th>Ora</th>
+                        <th>Total Weight</th>
+                        <th>Empty Weight</th>
+                        <th>Difference</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>{{ $log->id }}</td>
+                        <td>{{ \Carbon\Carbon::parse($log->date)->format('d/m/Y') }}</td>
+                        <td>{{ \Carbon\Carbon::parse($log->date)->format('H:i') }}</td>
+                        <td>{{ $log->weight }}</td>
+                        <td>
+                            @php
+                                $emptyWeight = $log->vehicle->lastestEmptyVehicleWeight;
+                                echo $emptyWeight;
+                            @endphp
+                        </td>
+                        <td>{{ $log->weight - $emptyWeight }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        {{-- ✅ Add a page break between logs (except after the last one) --}}
+        @if (!$loop->last)
+            <div class="page-break"></div>
+        @endif
+    @endforeach
 
 </body>
 </html>
