@@ -25,7 +25,7 @@ class VehicleLogService
         //         //AllowedFilter::custom('search', new FilterVehicle()),
         //         AllowedFilter::exact('vehicleId', 'vehicle_id'),
         //     ])
-            $vehicleIds = $request->filter['vehicleId']?explode(',', $request->filter['vehicleId']): [];
+            $vehicleIds = isset($request->filter['vehicleId'])?explode(',', $request->filter['vehicleId']): [];
 
             $startAt = $request->filter['startAt'] ?? null;
             $endAt = $request->filter['endAt'] ?? null;

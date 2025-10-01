@@ -24,7 +24,7 @@ class VehiclePdfExportController extends Controller
             $logs = VehicleLog::with('vehicle')->get();
         }
 
-        $vehicleIds = $request->filter['vehicleId']?explode(',', $request->filter['vehicleId']): [];
+        $vehicleIds = isset($request->filter['vehicleId'])?explode(',', $request->filter['vehicleId']): [];
         $startAt = $request->filter['startAt'] ?? null;
         $endAt = $request->filter['endAt'] ?? null;
         $company = $request->filter['company'] ?? null;
