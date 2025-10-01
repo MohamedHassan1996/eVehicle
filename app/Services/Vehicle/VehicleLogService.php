@@ -25,7 +25,7 @@ class VehicleLogService
         //         //AllowedFilter::custom('search', new FilterVehicle()),
         //         AllowedFilter::exact('vehicleId', 'vehicle_id'),
         //     ])
-            $vehicleIds = explode(',', $request->filter['vehicleId'] ?? []);
+            $vehicleIds = explode(',', $request->filter['vehicleId'] ?? '');
             $vehicleLogs = VehicleLog::query()
             ->when($request->filter['vehicleId'], function ($query) use ($request, $vehicleIds) {
                 return $query->whereIn('vehicle_id', $vehicleIds);
