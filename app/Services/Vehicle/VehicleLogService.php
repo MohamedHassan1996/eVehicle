@@ -7,6 +7,8 @@ use App\Models\Vehicle;
 use App\Models\VehicleLog;
 use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
+use Carbon\Carbon;
+
 class VehicleLogService
 {
 
@@ -15,13 +17,33 @@ class VehicleLogService
     }
     public function allVehicleLogs()
     {
+        $request = request();
         $perPage = request()->get('pageSize', 10000);
 
-        $vehicleLogs = QueryBuilder::for(VehicleLog::class)
-            ->allowedFilters([
-                //AllowedFilter::custom('search', new FilterVehicle()),
-                AllowedFilter::exact('vehicleId', 'vehicle_id'),
-            ])
+        // $vehicleLogs = QueryBuilder::for(VehicleLog::class)
+        //     ->allowedFilters([
+        //         //AllowedFilter::custom('search', new FilterVehicle()),
+        //         AllowedFilter::exact('vehicleId', 'vehicle_id'),
+        //     ])
+            $vehicleIds = explode(',', $request->filter['vehicleId'] ?? []);
+            $vehicleLogs = VehicleLog::query()
+            ->when($request->filter['vehicleId'], function ($query) use ($request, $vehicleIds) {
+                return $query->whereIn('vehicle_id', $vehicleIds);
+            })
+            ->when($request->filter['company'], function ($query) use ($request) {
+                return $query->whereHas('vehicle', function ($q) use ($request) {
+                    $q->where('company_name', $request->filter['company']);
+                });
+            })
+            ->when($request->filter['startAt'] && $request->filter['endAt'], function ($query) use ($request) {
+                return $query->whereBetween('date', [Carbon::parse($request->filter['startAt'])->startOfDay(), Carbon::parse($request->filter['endAt'])->endOfDay()]);
+            })
+            ->when($request->filter['startAt'] && !$request->filter['endAt'], function ($query) use ($request) {
+                return $query->where('date', '>=', Carbon::parse($request->filter['startAt'])->startOfDay());
+            })
+            ->when(!$request->filter['startAt'] && $request->filter['endAt'], function ($query) use ($request) {
+                return $query->where('date', '<=', Carbon::parse($request->filter['endAt'])->endOfDay());
+            })
             ->with('vehicle')
             ->paginate($perPage); // Pagination applied here
 

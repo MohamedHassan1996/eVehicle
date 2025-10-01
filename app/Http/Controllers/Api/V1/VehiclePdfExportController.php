@@ -18,20 +18,35 @@ class VehiclePdfExportController extends Controller
 {
     public function export(Request $request)
     {
-
-        $request->validate([
-            'vehicleLogIds' => 'sometimes|array', // license_plate (Tractor)
-            'allData' => 'sometimes|boolean',
-        ]);
-
         // Build query for logs
         $logs = null;
         if ($request->allData) {
             $logs = VehicleLog::with('vehicle')->get();
-        } else {
-            $logs = VehicleLog::whereIn('id' ,$request->vehicleLogIds)->with('vehicle')->get();
         }
 
+        $vehicleIds = explode(',', $request->filter['vehicleId'] ?? []);
+        $logs = VehicleLog::with('vehicle')
+            ->when($request->filter['vehicleId'], function ($query) use ($request, $vehicleIds) {
+                return $query->whereIn('vehicle_id', $vehicleIds);
+            })
+            ->when($request->filter['vehicleLogIds'], function ($query) use ($request) {
+                return $query->whereIn('id', $request->filter['vehicleLogIds']);
+            })
+            ->when($request->filter['company'], function ($query) use ($request) {
+                return $query->whereHas('vehicle', function ($q) use ($request) {
+                    $q->where('company_name', $request->filter['company']);
+                });
+            })
+            ->when($request->filter['startAt'] && $request->filter['endAt'], function ($query) use ($request) {
+                return $query->whereBetween('date', [Carbon::parse($request->filter['startAt'])->startOfDay(), Carbon::parse($request->filter['endAt'])->endOfDay()]);
+            })
+            ->when($request->filter['startAt'] && !$request->filter['endAt'], function ($query) use ($request) {
+                return $query->where('date', '>=', Carbon::parse($request->filter['startAt'])->startOfDay());
+            })
+            ->when(!$request->filter['startAt'] && $request->filter['endAt'], function ($query) use ($request) {
+                return $query->where('date', '<=', Carbon::parse($request->filter['endAt'])->endOfDay());
+            })
+            ->get();
         //$vehicle = Vehicle::where('id', $log->vehicle_id)->first();
 
         //$vehicleEmptyWeight = VehicleLog::where('vehicle_id', $vehicle->id)->where('weight_type', 0)->first()?->weight??0;

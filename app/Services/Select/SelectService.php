@@ -3,6 +3,7 @@
 
 namespace App\Services\Select;
 
+use App\Models\Vehicle;
 use App\Services\Select\Parameter\ParameterSelectService;
 
 class SelectService
@@ -52,16 +53,20 @@ class SelectService
     private function resolveSelectService($select)
     {
         $selectServiceMap = [
-            'persons' => ['getAllPersons', UserSelectService::class],
-            'relatedPersons' => ['getAllRelatedPersons', UserSelectService::class],
-            'relatedWorkspaces' => ['getAllRelatedWorkspaces', WorkspaceSelectService::class],
+            'companies' => ['getAllCompanies', CompanySelectService::class],
+            'vehicles' => ['getAllVehicles', VehicleSelectService::class],
         ];
 
         $paramValue = null; // Initialize paramValue
 
-        if (preg_match('/(\w+)=(?:(\b[0-9A-Fa-f\-]{36}\b)|\{([a-zA-Z]+)\}|(\d+))/', $select, $matches)) {
+        if (preg_match('/(\w+)=(?:(\b[0-9A-Fa-f\-]{36}\b)|\{([a-zA-Z]+)\}|(\d+)|([A-Za-z0-9_]+))/', $select, $matches)) {
             $select = $matches[1];
-            $paramValue = !empty($matches[2]) ? $matches[2] : (!empty($matches[3]) ? $matches[3] : $matches[4]);
+            if($matches[5] != null ){
+                $paramValue = $matches[5]; // UUID
+            }else{
+
+                $paramValue = !empty($matches[2]) ? $matches[2] : (!empty($matches[3]) ? $matches[3] : $matches[4]);
+            }
         }
 
         if (array_key_exists($select, $selectServiceMap)) {

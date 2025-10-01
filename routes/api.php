@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\V1\Auth\AuthLogoutController;
 use App\Http\Controllers\Api\V1\CheckVehicleController;
 use App\Http\Controllers\Api\V1\ImportVehicleDataController;
 use App\Http\Controllers\Api\V1\OuterVehicleLogController;
+use App\Http\Controllers\Api\V1\Select\SelectController;
 use App\Http\Controllers\Api\V1\User\UserController;
 use App\Http\Controllers\Api\V1\Vehicle\VehicleController;
 use App\Http\Controllers\Api\V1\Vehicle\VehicleLogController;
@@ -56,7 +57,9 @@ Route::prefix('v1')->group(function () {
     Route::get('vehicles-export-pdf', [VehiclePdfExportController::class, 'export']);
 
 
-
+    Route::prefix('selects')->group(function(){
+        Route::get('', [SelectController::class, 'getSelects']);
+    });
 
 });
 
