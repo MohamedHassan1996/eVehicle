@@ -24,7 +24,7 @@ class VehiclePdfExportController extends Controller
             $logs = VehicleLog::with('vehicle')->get();
         }
 
-        $vehicleIds = explode(',', $request->filter['vehicleId'] ?? []);
+        $vehicleIds = explode(',', $request->filter['vehicleId'] ?? '');
         $logs = VehicleLog::with('vehicle')
             ->when($request->filter['vehicleId'], function ($query) use ($request, $vehicleIds) {
                 return $query->whereIn('vehicle_id', $vehicleIds);
