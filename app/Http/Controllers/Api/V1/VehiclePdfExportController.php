@@ -25,26 +25,30 @@ class VehiclePdfExportController extends Controller
         }
 
         $vehicleIds = explode(',', $request->filter['vehicleId'] ?? '');
+        $startAt = $request->filter['startAt'] ?? null;
+        $endAt = $request->filter['endAt'] ?? null;
+        $company = $request->filter['company'] ?? null;
+        $vehicleLogIds = explode(',', $request->filter['vehicleLogIds'] ?? '');
         $logs = VehicleLog::with('vehicle')
-            ->when($request->filter['vehicleId'], function ($query) use ($request, $vehicleIds) {
+            ->when($vehicleIds, function ($query) use ($request, $vehicleIds) {
                 return $query->whereIn('vehicle_id', $vehicleIds);
             })
-            ->when($request->filter['vehicleLogIds'], function ($query) use ($request) {
+            ->when($vehicleLogIds, function ($query) use ($request) {
                 $ids = explode(',', $request->filter['vehicleLogIds'] ?? '');
                 return $query->whereIn('id', $ids);
             })
-            ->when($request->filter['company'], function ($query) use ($request) {
+            ->when($company, function ($query) use ($request) {
                 return $query->whereHas('vehicle', function ($q) use ($request) {
                     $q->where('company_name', $request->filter['company']);
                 });
             })
-            ->when($request->filter['startAt'] && $request->filter['endAt'], function ($query) use ($request) {
+            ->when($startAt && $endAt, function ($query) use ($request) {
                 return $query->whereBetween('date', [Carbon::parse($request->filter['startAt'])->startOfDay(), Carbon::parse($request->filter['endAt'])->endOfDay()]);
             })
-            ->when($request->filter['startAt'] && !$request->filter['endAt'], function ($query) use ($request) {
+            ->when($startAt && !$endAt, function ($query) use ($request) {
                 return $query->where('date', '>=', Carbon::parse($request->filter['startAt'])->startOfDay());
             })
-            ->when(!$request->filter['startAt'] && $request->filter['endAt'], function ($query) use ($request) {
+            ->when(!$startAt && $endAt, function ($query) use ($request) {
                 return $query->where('date', '<=', Carbon::parse($request->filter['endAt'])->endOfDay());
             })
             ->get();
