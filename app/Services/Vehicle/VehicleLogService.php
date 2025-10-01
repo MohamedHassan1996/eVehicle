@@ -25,7 +25,8 @@ class VehicleLogService
         //         //AllowedFilter::custom('search', new FilterVehicle()),
         //         AllowedFilter::exact('vehicleId', 'vehicle_id'),
         //     ])
-            $vehicleIds = explode(',', $request->filter['vehicleId'] ?? '');
+            $vehicleIds = $request->filter['vehicleId']?explode(',', $request->filter['vehicleId']): [];
+
             $startAt = $request->filter['startAt'] ?? null;
             $endAt = $request->filter['endAt'] ?? null;
             $company = $request->filter['company'] ?? null;
@@ -48,7 +49,9 @@ class VehicleLogService
                 return $query->where('date', '<=', Carbon::parse($request->filter['endAt'])->endOfDay());
             })
             ->with('vehicle')
-            ->paginate($perPage); // Pagination applied here
+            ->toRawSql();
+
+            dd($vehicleLogs);
 
 
         return $vehicleLogs;
