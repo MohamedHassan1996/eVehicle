@@ -49,9 +49,8 @@ class VehicleLogService
                 return $query->where('date', '<=', Carbon::parse($request->filter['endAt'])->endOfDay());
             })
             ->with('vehicle')
-            ->toRawSql();
+            ->paginate($perPage);
 
-            dd($vehicleLogs);
 
 
         return $vehicleLogs;
