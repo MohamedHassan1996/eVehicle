@@ -30,7 +30,8 @@ class VehiclePdfExportController extends Controller
                 return $query->whereIn('vehicle_id', $vehicleIds);
             })
             ->when($request->filter['vehicleLogIds'], function ($query) use ($request) {
-                return $query->whereIn('id', $request->filter['vehicleLogIds']);
+                $ids = explode(',', $request->filter['vehicleLogIds'] ?? '');
+                return $query->whereIn('id', $ids);
             })
             ->when($request->filter['company'], function ($query) use ($request) {
                 return $query->whereHas('vehicle', function ($q) use ($request) {
