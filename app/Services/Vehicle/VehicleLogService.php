@@ -49,6 +49,7 @@ class VehicleLogService
                 return $query->where('date', '<=', Carbon::parse($request->filter['endAt'])->endOfDay());
             })
             ->with('vehicle')
+            ->orderBy('created_at', 'desc')
             ->paginate($perPage);
 
 
