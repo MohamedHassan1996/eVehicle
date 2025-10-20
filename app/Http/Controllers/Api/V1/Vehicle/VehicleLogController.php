@@ -58,7 +58,7 @@ class VehicleLogController extends Controller implements HasMiddleware
 
             DB::commit();
 
-            return ApiResponse::success([], __('crud.created'));
+            return ApiResponse::success([], 'created successfully !');
 
 
         } catch (\Exception $e) {
@@ -88,7 +88,7 @@ class VehicleLogController extends Controller implements HasMiddleware
             DB::beginTransaction();
             $this->vehicleLogService->updateVehicleLog($vehicleLog, $updateVehicleLogRequest->validated());
             DB::commit();
-            return ApiResponse::success([], __('crud.updated'));
+            return ApiResponse::success([], 'updated successfully !');
 
         } catch (\Exception $e) {
             DB::rollBack();
@@ -108,7 +108,7 @@ class VehicleLogController extends Controller implements HasMiddleware
             DB::beginTransaction();
             $this->vehicleLogService->deleteVehicleLog($vehicleLog);
             DB::commit();
-            return ApiResponse::success([], __('crud.deleted'));
+            return ApiResponse::success([], 'deleted successfully !');
 
         } catch (\Exception $e) {
             DB::rollBack();
