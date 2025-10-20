@@ -19,9 +19,9 @@ class VehicleLogResource extends JsonResource
         return [
             'vehicleLogId' => $this->id,
             'vehicleId' => $this->vehicle_id,
-            'weight' => $this->weight,
+            'weight' => $this->weight??0,
             'weightType' => $this->weight_type,
-            'date' => $this->date,
+            'date' => $this->date??'',
             'note' => $this->note??'',
             'licensePlate' => $this->vehicle->license_plate,
             'emptyVehicleWeight' => $emptyWeight,

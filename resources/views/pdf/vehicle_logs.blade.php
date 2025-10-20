@@ -104,12 +104,13 @@
             <table class="header-table">
                 <tr>
                     <td style="width: 50%; vertical-align: top;">
-                        <div class="company-name">BBC</div>
-                        <div class="company-subtitle">Energy Green</div>
+                        <div class="company-name">BBC Energy Green</div>
+                        <div class="company-subtitle">SOC. AGR. SRL</div>
+                        <div class="company-subtitle">SORESINA (CR)</div>
                     </td>
                     <td style="width: 50%; vertical-align: top;">
                         <div class="date">
-                            Date: {{ \Carbon\Carbon::parse($log->date)->format('d/m/y') }}
+                            Data: {{ \Carbon\Carbon::parse($log->date)->format('d/m/y H:i') }}
                         </div>
                     </td>
                 </tr>
@@ -119,7 +120,18 @@
 
             <table class="weight-table">
                 <tr>
-                    <td class="weight-label">MISURA</td>
+                    <td class="weight-label">TARGA</td>
+                    <td class="weight-value">@php
+                            $emptyWeight = $log->vehicle->license_plate;
+                            echo $emptyWeight;
+                        @endphp
+
+                        </td>
+                </tr>
+
+
+                <tr>
+                    <td class="weight-label">UNITA' DI MISURA</td>
                     <td class="weight-value">KG</td>
                 </tr>
                 <tr>
