@@ -11,6 +11,7 @@ class CompanySelectService
        $companies = DB::table('vehicles')
     ->selectRaw('MIN(company_name) as value, company_name as label')
     ->groupBy('company_name')
+    ->whereNotNull('company_name')
     ->get();
 
 

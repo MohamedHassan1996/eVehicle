@@ -21,7 +21,7 @@ class AllVehicleResource extends JsonResource
             'licensePlate' => $this->license_plate,
             'type' => $this->type??'',
             'companyName' => $this->company_name??'',
-            'emptyVehicleWeight' => $this->lastest_empty_vehicle_weight
+            'emptyVehicleWeight' => $this->lastestEmptyVehicleWeight($this->id),
         ];
     }
 }

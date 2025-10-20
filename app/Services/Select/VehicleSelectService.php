@@ -13,6 +13,7 @@ class VehicleSelectService
         ->when($companyName, function ($query, $companyName) {
             return $query->where('company_name', $companyName);
         })
+        ->whereNotNull('license_plate')
         ->get();
 
         return $clients;

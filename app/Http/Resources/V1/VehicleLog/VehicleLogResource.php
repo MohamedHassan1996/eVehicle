@@ -15,6 +15,7 @@ class VehicleLogResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        $emptyWeight = $this->getNearestEmptyWeight($this->id);
         return [
             'vehicleLogId' => $this->id,
             'vehicleId' => $this->vehicle_id,
@@ -23,8 +24,8 @@ class VehicleLogResource extends JsonResource
             'date' => $this->date,
             'note' => $this->note??'',
             'licensePlate' => $this->vehicle->license_plate,
-            'emptyVehicleWeight' => $this->lastest_empty_vehicle_weight,
-            'vehicleLoad' => $this->weight - $this->lastest_empty_vehicle_weight
+            'emptyVehicleWeight' => $emptyWeight,
+            'vehicleLoad' => $this->weight - $emptyWeight
 
         ];
     }

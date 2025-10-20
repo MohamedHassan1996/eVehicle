@@ -25,8 +25,8 @@ class AllVehicleLogResource extends JsonResource
             'weightType' => $this->weight_type,
             'date' => Carbon::parse($this->date)->format('d/m/Y'),
             'time' => Carbon::parse($this->date)->format('H:i'),
-            'emptyVehicleWeight' => $this->lastest_empty_vehicle_weight,
-            'vehicleLoad' => $this->weight - $this->lastest_empty_vehicle_weight
+            'emptyVehicleWeight' => $this->getNearestEmptyWeight($this->id),
+            'vehicleLoad' => $this->weight - $this->getNearestEmptyWeight($this->id)
         ];
     }
 }

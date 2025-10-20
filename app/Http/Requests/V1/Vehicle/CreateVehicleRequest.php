@@ -27,8 +27,8 @@ class CreateVehicleRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'licensePlate' => ['required', 'string', 'unique:vehicles,license_plate',
-                'regex:/^[a-zA-Z]{2}\d{3}[a-zA-Z]{2}$/i'
+            'licensePlate' => ['required', 'string', /*'unique:vehicles,license_plate',
+                'regex:/^[a-zA-Z]{2}\d{3}[a-zA-Z]{2}$/i'*/
             ],
             'companyName' => ['nullable', 'string'],
             'type' => ['nullable', 'string'],

@@ -17,67 +17,66 @@ use Illuminate\Support\Facades\Storage;
 class VehiclePdfExportController extends Controller
 {
     public function export(Request $request)
-    {
-        // Build query for logs
-        $logs = null;
-        if ($request->allData) {
-            $logs = VehicleLog::with('vehicle')->get();
-        }
+{
+    // Leggo parametri senza obbligare a usare "filter"
+    $vehicleIds = isset($request->filter['vehicleId']) ? explode(',', $request->filter['vehicleId']) : [];
+    $startAt = isset($request->filter['startAt']) ? $request->filter['startAt']: null;
+    $endAt = isset($request->filter['endAt']) ? $request->filter['endAt']: null;
+    $company = isset($request->filter['company']) ? $request->filter['company']: null;
+    $vehicleLogIds = isset($request->filter['vehicleLogIds']) ? explode(',', $request->filter['vehicleLogIds']) : [];
+    
 
-        $vehicleIds = isset($request->filter['vehicleId'])?explode(',', $request->filter['vehicleId']): [];
-        $startAt = $request->filter['startAt'] ?? null;
-        $endAt = $request->filter['endAt'] ?? null;
-        $company = $request->filter['company'] ?? null;
-        $vehicleLogIds = explode(',', $request->filter['vehicleLogIds'] ?? '');
-        $logs = VehicleLog::with('vehicle')
-            ->when($vehicleIds, function ($query) use ($request, $vehicleIds) {
-                return $query->whereIn('vehicle_id', $vehicleIds);
-            })
-            ->when($vehicleLogIds, function ($query) use ($request) {
-                $ids = explode(',', $request->filter['vehicleLogIds'] ?? '');
-                return $query->whereIn('id', $ids);
-            })
-            ->when($company, function ($query) use ($request) {
-                return $query->whereHas('vehicle', function ($q) use ($request) {
-                    $q->where('company_name', $request->filter['company']);
-                });
-            })
-            ->when($startAt && $endAt, function ($query) use ($request) {
-                return $query->whereBetween('date', [Carbon::parse($request->filter['startAt'])->startOfDay(), Carbon::parse($request->filter['endAt'])->endOfDay()]);
-            })
-            ->when($startAt && !$endAt, function ($query) use ($request) {
-                return $query->where('date', '>=', Carbon::parse($request->filter['startAt'])->startOfDay());
-            })
-            ->when(!$startAt && $endAt, function ($query) use ($request) {
-                return $query->where('date', '<=', Carbon::parse($request->filter['endAt'])->endOfDay());
-            })
-            ->get();
-        //$vehicle = Vehicle::where('id', $log->vehicle_id)->first();
-
-        //$vehicleEmptyWeight = VehicleLog::where('vehicle_id', $vehicle->id)->where('weight_type', 0)->first()?->weight??0;
-
-        // Generate PDF
-        $pdf = Pdf::loadView('pdf.vehicle_logs', [
-            'logs' => $logs,
-        ]);
-
-        // Return as downloadable file
-        // ✅ Define filename and save path
-        $fileName =  'logs_' . Carbon::now()->format('Ymd_His') . '.pdf';
-        $filePath = 'exports/' . $fileName;
-
-        // ✅ Save the file to `storage/app/public/exports`
-        Storage::disk('public')->put($filePath, $pdf->output());
-
-        // ✅ Generate public URL
-        $url = Storage::url($filePath);
-
-        // ✅ Return the URL as JSON
+    $logs = VehicleLog::with('vehicle')
+    ->where('weight_type', 1)
+        ->when(!empty($vehicleIds), function ($query) use ($vehicleIds) {
+            return $query->whereIn('vehicle_id', $vehicleIds);
+        })
+        ->when(!empty($vehicleLogIds), function ($query) use ($vehicleLogIds) {
+            return $query->whereIn('id', $vehicleLogIds);
+        })
+        ->when(!empty($company), function ($query) use ($company) {
+            return $query->whereHas('vehicle', function ($q) use ($company) {
+                $q->where('company_name', $company);
+            });
+        })
+        ->when($startAt && $endAt, function ($query) use ($startAt, $endAt) {
+            return $query->whereBetween('date', [
+                Carbon::parse($startAt)->startOfDay(),
+                Carbon::parse($endAt)->endOfDay()
+            ]);
+        })
+        ->when($startAt && !$endAt, function ($query) use ($startAt) {
+            return $query->where('date', '>=', Carbon::parse($startAt)->startOfDay());
+        })
+        ->when(!$startAt && $endAt, function ($query) use ($endAt) {
+            return $query->where('date', '<=', Carbon::parse($endAt)->endOfDay());
+        })
+         ->orderBy('date', 'ASC')
+        ->get();
+        
+    // Se nessun dato, restituisco messaggio
+    if ($logs->isEmpty()) {
         return response()->json([
-            'message' => 'PDF exported successfully',
-            'url' => asset($url)
-        ]);
-
+            'message' => 'Nessun dato trovato per i filtri selezionati.'
+        ], 404);
     }
+
+    // Genero il PDF
+    $pdf = Pdf::loadView('pdf.vehicle_logs', [
+        'logs' => $logs
+    ]);
+
+    $fileName = 'logs_' . Carbon::now()->format('Ymd_His') . '.pdf';
+    $filePath = 'exports/' . $fileName;
+
+    Storage::disk('public')->put($filePath, $pdf->output());
+    $url = Storage::url($filePath);
+
+    return response()->json([
+        'message' => 'PDF generato con successo',
+        'url' => asset($url)
+    ]);
+}
+
 
 }
