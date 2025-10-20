@@ -142,7 +142,7 @@
                     <td class="weight-label">TARA</td>
                     <td class="weight-value">
                         @php
-                            $emptyWeight = $log->vehicle->getNearestEmptyWeight($log->id);
+                            $emptyWeight = $log->vehicle->lastestEmptyVehicleWeight($log->vehicle_id);
                             echo $emptyWeight;
                         @endphp
                     </td>
