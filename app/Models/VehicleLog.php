@@ -40,9 +40,9 @@ class VehicleLog extends Model
         return 0; // If no log found, return 0 or handle as needed
     }
 
-    // if($currentLog->weight_type == 0) {
-    //     return $currentLog->weight ?? 0; // If the current log is empty, return its weight
-    // }
+    if($currentLog->weight_type == 0) {
+        return $currentLog->weight ?? 0; // If the current log is empty, return its weight
+    }
 
     // Find the nearest previous "empty" (weight_type = 0) before this log's date
     $previousEmpty = VehicleLog::where('vehicle_id', $currentLog->vehicle_id)
