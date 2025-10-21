@@ -18,7 +18,7 @@ class VehicleService
 
         $vehicles = QueryBuilder::for(Vehicle::class)
             ->allowedFilters([
-                AllowedFilter::custom('search', new FilterVehicle()),
+                AllowedFilter::custom('company', new FilterVehicle()),
             ])
             ->with('vehicleLogs')
             ->paginate($perPage); // Pagination applied here
