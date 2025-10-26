@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\V1\User\UserController;
 use App\Http\Controllers\Api\V1\Vehicle\VehicleController;
 use App\Http\Controllers\Api\V1\Vehicle\VehicleLogController;
 use App\Http\Controllers\Api\V1\VehiclePdfExportController;
+use App\Http\Controllers\Api\V1\VehicleSpeardsheetExportController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -55,6 +56,8 @@ Route::prefix('v1')->group(function () {
     Route::post('import-vehicle-data', [ImportVehicleDataController::class, 'import']);
 
     Route::get('vehicles-export-pdf', [VehiclePdfExportController::class, 'export']);
+
+    Route::get('vehicle-logs-export-spreadsheet', [VehicleSpeardsheetExportController::class, 'export']);
 
 
     Route::prefix('selects')->group(function(){
